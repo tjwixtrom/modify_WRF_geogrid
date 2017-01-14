@@ -1,7 +1,11 @@
 # modify_WRF_geogrid
+
 Code for the modification of the WRF-ARW geogrid using Python
+
 by Tyler Wixtrom and Dr. Kevin Goebbert
+
 This code will allow for the removal of water bodies from the WRF geography grid.
+
 To run the WRF without a water body, complete the following steps:
   1. Define region of interest in code. This is the area containing the gridpoint that will be
      changed to land.
