@@ -15,3 +15,11 @@ To run the WRF without a water body, complete the following steps:
   3. Execute code. The output filename should be changed to reflect the WPS geogrid configuration.
   4. Place output file in WRF/WPS directory.
   5. Run metgrid.exe, real.exe, and wrf.exe. The model should run without the water body present. 
+
+Acknowledgements
+
+Resources for this project were donated by the Department of Geography and Meteorology at Valparaiso University
+
+Important information about what fields needed to be modified came from the following website: http://www.wrfems.info/viewtopic.php?t=141 
+
+Code for copying netCDF variables and dimensions from one file to another in Python came from the following website: http://stackoverflow.com/questions/15141563/python-netcdf-making-a-copy-of-all-variables-and-attributes-but-one 

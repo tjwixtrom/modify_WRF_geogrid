@@ -12,6 +12,15 @@
 # the lat/lon coordinates of the corners. Any gridpoints within this region with
 # the landmask set to water (landmask = 0) will be modified with the attributes 
 # of the point defined in part b
+#
+# Resources for this project were donated by the Department of Geography and
+# Meteorology at Valparaiso University
+# Important information about what fields needed to be modified came from the 
+# following website: http://www.wrfems.info/viewtopic.php?t=141 
+# Code for copying netCDF variables and dimensions from one file to another in 
+# Python came from the following website: 
+# http://stackoverflow.com/questions/15141563/python-netcdf-making-a-copy-of-all-variables-and-attributes-but-one 
+
 
 # import libraries
 import numpy as np
