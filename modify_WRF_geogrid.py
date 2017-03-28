@@ -1,4 +1,4 @@
-
+#!/Users/tyler/anaconda/bin/python
 # change_lake.py
 # by Tyler Wixtrom and Kevin Goebbert
 # This script will change WRF geogrid points defined as water to land
@@ -149,7 +149,7 @@ urb_param_out = dsin.variables['URB_PARAM'][:]
 lake_depth_out = dsin.variables['LAKE_DEPTH'][:]
 
 
-mask = ma.make_mask_none((149,174))
+mask = ma.make_mask_none((lat.shape)
 for i in range(ilat_LL, ilat_UR+1):
     for j in range(ilon_LL, ilon_UR+1):
         if landmask_out[0,i,j] == 0:
