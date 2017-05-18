@@ -8,18 +8,18 @@
 # model to be run with the desired water region defined as land.
 #
 #
-# The region of the geography grid that you wish to modify should be defined by 
+# The region of the geography grid that you wish to modify should be defined by
 # the lat/lon coordinates of the corners. Any gridpoints within this region with
-# the landmask set to water (landmask = 0) will be modified with the attributes 
+# the landmask set to water (landmask = 0) will be modified with the attributes
 # of the point defined in part b
 #
 # Resources for this project were donated by the Department of Geography and
 # Meteorology at Valparaiso University
-# Important information about what fields needed to be modified came from the 
-# following website: http://www.wrfems.info/viewtopic.php?t=141 
-# Code for copying netCDF variables and dimensions from one file to another in 
-# Python came from the following website: 
-# http://stackoverflow.com/questions/15141563/python-netcdf-making-a-copy-of-all-variables-and-attributes-but-one 
+# Important information about what fields needed to be modified came from the
+# following website: http://www.wrfems.info/viewtopic.php?t=141
+# Code for copying netCDF variables and dimensions from one file to another in
+# Python came from the following website:
+# http://stackoverflow.com/questions/15141563/python-netcdf-making-a-copy-of-all-variables-and-attributes-but-one
 
 
 # import libraries
@@ -75,14 +75,14 @@ def lat_lon_2D_index(y,x,lat1,lon1):
     '''This function calculates the distance from a desired lat/lon point
     to each element of a 2D array of lat/lon values, typically from model output,
     and determines the index value corresponding to the nearest lat/lon grid point.
-    
+
     x = longitude array
     y = latitude array
     lon1 = longitude point (signle value)
     lat1 = latitude point (single value)
-    
+
     Returns the index value for nearest lat/lon point on grid
-    
+
     Equations for variable distiance between longitudes from
     http://andrew.hedges.name/experiments/haversine/'''
     R = 6373.*1000.  # Earth's Radius in meters
@@ -91,8 +91,8 @@ def lat_lon_2D_index(y,x,lat1,lon1):
     y1 = np.ones(y.shape)*lat1
     dlon = np.abs(x-x1)
     dlat = np.abs(y-y1)
-    a = (np.sin(rad*dlat/2.))**2 + np.cos(rad*y1) * np.cos(rad*y) * (np.sin(rad*dlon/2.))**2 
-    c = 2 * np.arctan2( np.sqrt(a), np.sqrt(1-a) ) 
+    a = (np.sin(rad*dlat/2.))**2 + np.cos(rad*y1) * np.cos(rad*y) * (np.sin(rad*dlon/2.))**2
+    c = 2 * np.arctan2( np.sqrt(a), np.sqrt(1-a) )
     d = R * c
     return np.unravel_index(d.argmin(), d.shape)
 
@@ -149,7 +149,7 @@ urb_param_out = dsin.variables['URB_PARAM'][:]
 lake_depth_out = dsin.variables['LAKE_DEPTH'][:]
 
 
-mask = ma.make_mask_none((lat.shape)
+mask = ma.make_mask_none(lat.shape)
 for i in range(ilat_LL, ilat_UR+1):
     for j in range(ilon_LL, ilon_UR+1):
         if landmask_out[0,i,j] == 0:
@@ -181,36 +181,36 @@ print('writing to output file...')
 # Copy variables
 for v_name, varin in dsin.variables.items():
     outVar = dsout.createVariable(v_name, varin.datatype, varin.dimensions)
-    
+
     # Copy variable attributes
     outVar.setncatts({k: varin.getncattr(k) for k in varin.ncattrs()})
-    
+
     if (v_name == 'LANDMASK'):
         outVar[:] = landmask_out[:]
     elif (v_name == 'SCT_DOM'):
-        outVar[:] = sct_dom_out[:] 
+        outVar[:] = sct_dom_out[:]
     elif (v_name == 'HGT_M'):
-        outVar[:] = hgt_m_out[:]     
+        outVar[:] = hgt_m_out[:]
     elif (v_name == 'SOILTEMP'):
         outVar[:] = soiltemp_out[:]
     elif (v_name == 'SLOPECAT'):
-        outVar[:] = slopecat_out[:] 
+        outVar[:] = slopecat_out[:]
     elif (v_name == 'SOILCTOP'):
         outVar[:] = soilctop_out[:]
     elif (v_name == 'SCT_DOM'):
-        outVar[:] = sct_dom_out[:]    
+        outVar[:] = sct_dom_out[:]
     elif (v_name == 'LANDUSEF'):
-        outVar[:] = landusef_out[:] 
+        outVar[:] = landusef_out[:]
     elif (v_name == 'SOILCBOT'):
-        outVar[:] = soilcbot_out[:] 
+        outVar[:] = soilcbot_out[:]
     elif (v_name == 'SCB_DOM'):
         outVar[:] = scb_dom_out[:]
     elif (v_name == 'ALBEDO12M'):
-        outVar[:] = albedo_out[:] 
+        outVar[:] = albedo_out[:]
     elif (v_name == 'GREENFRAC'):
-        outVar[:] = greenfrac_out[:] 
+        outVar[:] = greenfrac_out[:]
     elif (v_name == 'LAI12M'):
-        outVar[:] = lai_out[:]     
+        outVar[:] = lai_out[:]
     else:
         outVar[:] = varin[:]
 
@@ -224,7 +224,7 @@ print('Creating plot of new landmask...')
 clat = lat[ilat_LL:ilat_UR, ilon_LL:ilon_UR]
 clon = lon[ilat_LL:ilat_UR, ilon_LL:ilon_UR]
 crs = ccrs.PlateCarree()
-states_provinces = cfeature.NaturalEarthFeature(category='cultural', 
+states_provinces = cfeature.NaturalEarthFeature(category='cultural',
                                                 name='admin_1_states_provinces_lakes_shp',
                                                 scale='50m',
                                                 facecolor='none')
