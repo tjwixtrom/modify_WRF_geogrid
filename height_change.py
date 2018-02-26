@@ -1,6 +1,6 @@
-# change_lake.py
+# height_change.py
 # by Tyler Wixtrom and Kevin Goebbert
-# This script will change WRF geogrid points defined as water to land
+# This script will change WRF geogrid points defined to a new terrain height.
 # It will output a new version of the geo_em.dxx.nc file created by WPS
 # This can be used to replace the file found in the WRF/WPS directory.
 # Repeating WRF startup steps after execution of geogrid.exe will allow the
@@ -12,8 +12,6 @@
 # the landmask set to water (landmask = 0) will be modified with the attributes
 # of the point defined in part b
 #
-# Resources for this project were donated by the Department of Geography and
-# Meteorology at Valparaiso University
 # Important information about what fields needed to be modified came from the
 # following website: http://www.wrfems.info/viewtopic.php?t=141
 # Code for copying netCDF variables and dimensions from one file to another in
@@ -107,83 +105,21 @@ ilat_UR, ilon_UR = lat_lon_2D_index(lat, lon, UR[0], UR[1])
 ilat_LL, ilon_LL = lat_lon_2D_index(lat, lon, LL[0], LL[1])
 
 # Defining variables to change
-# Creating the landmask array from the landmask variable
-landmask_out = dsin.variables['LANDMASK'][:]
 
 # hght_m variable
-hgt_m_out = dsin.variables['HGT_M'][:]
-
-# slopecat variable
-slopecat_out = dsin.variables['SLOPECAT'][:]
-
-# soiltemp is average mean soil temp in K
-soiltemp_out = dsin.variables['SOILTEMP'][:]
-
-# 16 category top layer soil type
-soilctop_out = dsin.variables['SOILCTOP'][:]
-
-# Dominant soil type for each grid point
-sct_dom_out = dsin.variables['SCT_DOM'][:]
-
-# Land Use category
-landusef_out = dsin.variables['LANDUSEF'][:]
-
-# 16 category soil type bottom
-# Fraction of each soil category
-soilcbot_out = dsin.variables['SOILCBOT'][:]
-
-# Dominant bottom soil category
-scb_dom_out = dsin.variables['SCB_DOM'][:]
-
-# Monthly surface albedo
-albedo_out = dsin.variables['ALBEDO12M'][:]
-
-# Snow Surface albedo
-snoalb_out = dsin.variables['SNOALB'][:]
-
-# monthly green fraction
-greenfrac_out = dsin.variables['GREENFRAC'][:]
-
-# 12 month LAI
-lai_out = dsin.variables['LAI12M'][:]
-
-# Urban Parameter
-urb_param_out = dsin.variables['URB_PARAM'][:]
-
-# Lake Depth
-lake_depth_out = dsin.variables['LAKE_DEPTH'][:]
-
+hgt_m_in = dsin.variables['HGT_M'][:]
 
 mask = ma.make_mask_none(lat.shape)
 for i in range(ilat_LL, ilat_UR+1):
     for j in range(ilon_LL, ilon_UR+1):
-        if landmask_out[0, i, j] == 0:
-            mask[i, j] = True
+        mask[i, j] = True
 
 # Getting the index values of gridpoint to be cloned to lake
 ilat_lnd, ilon_lnd = lat_lon_2D_index(lat, lon, llat, llon)
 
-if landmask_out[0, ilat_lnd, ilon_lnd] == 0:
-    print('Error: Point chosen to copy land attributes is over water. Please choose a new point.')
-if landmask_out[0, ilat_lnd, ilon_lnd] == 1:
-    print('Cloning gridpoints based on selected point')
-
-
 # Changing the variables based on above lat/lon point defined
-sct_dom_out[0, mask == True] = sct_dom_out[0, ilat_lnd, ilon_lnd]
-landmask_out[0, mask == True] = 1
-soiltemp_out[0, mask == True] = soiltemp_out[0, ilat_lnd, ilon_lnd]
-slopecat_out[0, mask == True] = slopecat_out[0, ilat_lnd, ilon_lnd]
-scb_dom_out[0, mask == True] = scb_dom_out[0, ilat_lnd, ilon_lnd]
-landusef_out[0, :, mask == True] = landusef_out[0, :, ilat_lnd, ilon_lnd]
-soilctop_out[0, :, mask == True] = soilctop_out[0, :, ilat_lnd, ilon_lnd]
-soilcbot_out[0, :, mask == True] = soilcbot_out[0, :, ilat_lnd, ilon_lnd]
-albedo_out[0, :, mask == True] = albedo_out[0, :, ilat_lnd, ilon_lnd]
-snoalb_out[0, mask == True] = snoalb_out[0, ilat_lnd, ilon_lnd]
-greenfrac_out[0, :, mask == True] = greenfrac_out[0, :, ilat_lnd, ilon_lnd]
-lai_out[0, :, mask == True] = lai_out[0, :, ilat_lnd, ilon_lnd]
-urb_param_out[0, :, mask == True] = urb_param_out[0, :, ilat_lnd, ilon_lnd]
-lake_depth_out[0, mask == True] = lake_depth_out[0, ilat_lnd, ilon_lnd]
+hgt_m_out = hgt_m_in.copy()
+hgt_m_out[0, mask == True] = 1500.0
 
 print('writing to output file...')
 
@@ -194,32 +130,8 @@ for v_name, varin in dsin.variables.items():
     # Copy variable attributes
     outVar.setncatts({k: varin.getncattr(k) for k in varin.ncattrs()})
 
-    if v_name == 'LANDMASK':
-        outVar[:] = landmask_out[:]
-    elif v_name == 'SCT_DOM':
-        outVar[:] = sct_dom_out[:]
-    elif v_name == 'HGT_M':
+    if v_name == 'HGT_M':
         outVar[:] = hgt_m_out[:]
-    elif v_name == 'SOILTEMP':
-        outVar[:] = soiltemp_out[:]
-    elif v_name == 'SLOPECAT':
-        outVar[:] = slopecat_out[:]
-    elif v_name == 'SOILCTOP':
-        outVar[:] = soilctop_out[:]
-    elif v_name == 'SCT_DOM':
-        outVar[:] = sct_dom_out[:]
-    elif v_name == 'LANDUSEF':
-        outVar[:] = landusef_out[:]
-    elif v_name == 'SOILCBOT':
-        outVar[:] = soilcbot_out[:]
-    elif v_name == 'SCB_DOM':
-        outVar[:] = scb_dom_out[:]
-    elif v_name == 'ALBEDO12M':
-        outVar[:] = albedo_out[:]
-    elif v_name == 'GREENFRAC':
-        outVar[:] = greenfrac_out[:]
-    elif v_name == 'LAI12M':
-        outVar[:] = lai_out[:]
     else:
         outVar[:] = varin[:]
 

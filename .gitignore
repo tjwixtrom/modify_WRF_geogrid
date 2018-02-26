@@ -1,3 +1,4 @@
 *.pyc
 .idea/
 out.nc
+.ipynb_checkpoints
